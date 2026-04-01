@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Tipos de JOIN en consultas SQL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            font-size: 20.5px
+        }
+
+        :root {
+            --bg: #0a1628;
+            --surface: rgba(255, 255, 255, .06);
+            --surf2: rgba(255, 255, 255, .09);
+            --primary: #004170;
+            --accent: #FBBE00;
+            --correct: #22c55e;
+            --wrong: #ef4444;
+            --text: #e2e8f0;
+            --muted: #cbd5e1;
+            --radius: 14px
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #060e1a;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden
+        }
+
+        body.light {
+            --bg: #f0f4fb;
+            --surface: rgba(0, 65, 112, .04);
+            --surf2: rgba(0, 65, 112, .07);
+            --text: #0f172a;
+            --muted: #475569;
+            background: #e2e8f0;
+            color: #0f172a
+        }
+
+        /* WRAPPER */
+        .wrap {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16/9;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .45);
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, .08);
+            position: relative
+        }
+
+        body.light .wrap {
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .12);
+            border-color: rgba(0, 65, 112, .12)
+        }
+
+        /* TOP BAR */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: #fff;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10
+        }
+
+        .topbar .course {
+            font-size: .8rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+            background: rgba(255, 255, 255, .15);
+            padding: 4px 12px;
+            border-radius: 6px
+        }
+
+        .topbar .title {
+            font-size: .9rem;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+            padding: 0 10px
+        }
+
+        .topbar .controls {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .topbar img {
+            height: 28px;
+            object-fit: contain;
+            filter: brightness(0) invert(1)
+        }
+
+        body.light .topbar img {
+            filter: brightness(0) invert(1)
+        }
+
+        .tbtn {
+            border: none;
+            background: rgba(255, 255, 255, .15);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .85rem;
+            transition: all .2s
+        }
+
+        .tbtn:hover {
+            background: rgba(255, 255, 255, .3)
+        }
+
+        /* SLIDE AREA */
+        .slides {
+            flex: 1;
+            position: relative;
+            overflow: hidden
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: 34px 50px;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateX(40px);
+            transition: all .4s ease;
+            pointer-events: none;
+            overflow: hidden;
+            background: var(--bg);
+            z-index: 1
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+            z-index: 5
+        }
+
+        .slide.prev {
+            transform: translateX(-40px)
+        }
+
+        /* SCROLLABLE CONTENT */
+        .content-scroll {
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 12px;
+            padding-bottom: 20px
+        }
+
+        .content-scroll::-webkit-scrollbar {
+            width: 8px
+        }
+
+        .content-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, .02);
+            border-radius: 4px
+        }
+
+        .content-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .2);
+            border-radius: 4px
+        }
+
+        body.light .content-scroll::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, .02)
+        }
+
+        body.light .content-scroll::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, .2)
+        }
+
+        /* HERO SLIDE */
+        .hero-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #004170 0%, #001d3d 50%, #003058 100%);
+            position: relative;
+            z-index: 6;
+            height: 100%;
+            display: flex;
+            flex-direction: column
+        }
+
+        body.light .hero-slide {
+            background: linear-gradient(135deg, #e8f0fe 0%, #f0f4fb 50%, #dbeafe 100%)
+        }
+
+        .hero-slide::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(251, 190, 0, .12), transparent 70%);
+            animation: pulse 4s ease-in-out infinite
+        }
+
+        .hero-slide::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -60px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 65, 112, .2), transparent 70%)
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: .6
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 1
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(251, 190, 0, .15);
+            border: 1px solid rgba(251, 190, 0, .3);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 16px;
+            animation: fadeIn .6s ease
+        }
+
+        .hero-slide h1 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: #fff;
+            animation: fadeIn .6s .1s ease both
+        }
+
+        body.light .hero-slide h1 {
+            color: #0f172a
+        }
+
+        .hero-slide .sub {
+            color: rgba(255, 255, 255, .7);
+            font-size: .95rem;
+            margin-bottom: 18px;
+            animation: fadeIn .6s .2s ease both
+        }
+
+        body.light .hero-slide .sub {
+            color: #475569
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--accent);
+            color: #0f172a;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all .25s;
+            animation: fadeIn .6s .3s ease both
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 190, 0, .3)
+        }
+
+        .hero-cta .arrow {
+            transition: transform .2s
+        }
+
+        .hero-cta:hover .arrow {
+            transform: translateX(3px)
+        }
+
+        .instruction-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(251, 190, 0, .1);
+            border: 1px solid rgba(251, 190, 0, .2);
+            border-radius: 10px;
+            padding: 10px 18px;
+            margin-top: 16px;
+            font-size: .88rem;
+            color: var(--accent);
+            font-weight: 600;
+            animation: fadeIn .6s .4s ease both;
+            max-width: 850px;
+            text-align: left;
+            line-height: 1.45;
+        }
+
+        body.light .instruction-bar {
+            background: rgba(0, 65, 112, .06);
+            border-color: rgba(0, 65, 112, .12);
+            color: #004170
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* CONTENT SLIDES */
+        .slide-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text)
+        }
+
+        .slide-header i {
+            color: var(--accent)
+        }
+
+        /* FLIP CARDS */
+        .frow {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1
+        }
+
+        .fc {
+            perspective: 800px;
+            cursor: pointer;
+            min-height: 220px
+        }
+
+        .fi {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform .6s;
+            transform-style: preserve-3d
+        }
+
+        .fc.flipped .fi {
+            transform: rotateY(180deg)
+        }
+
+        .ff,
+        .fb2 {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius);
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            overflow: hidden
+        }
+
+        .ff {
+            background: var(--surface);
+            border: 1.5px solid rgba(255, 255, 255, .08)
+        }
+
+        body.light .ff {
+            background: #fff;
+            border-color: rgba(0, 65, 112, .1)
+        }
+
+        .ff:hover {
+            border-color: rgba(251, 190, 0, .3)
+        }
+
+        .fb2 {
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .fb2::-webkit-scrollbar {
+            width: 6px
+        }
+
+        .fb2::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        .fb2::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .2);
+            border-radius: 3px
+        }
+
+        body.light .fb2::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, .2)
+        }
+
+        .fb2.best {
+            background: rgba(34, 197, 94, .06);
+            border: 1.5px solid rgba(34, 197, 94, .2)
+        }
+
+        .fb2.alt {
+            background: rgba(239, 68, 68, .04);
+            border: 1.5px solid rgba(239, 68, 68, .15)
+        }
+
+        .ff .lbl {
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: .4px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ff p {
+            font-size: .95rem;
+            line-height: 1.5;
+            flex: 1;
+            color: var(--text)
+        }
+
+        body.light .ff p {
+            color: #0f172a
+        }
+
+        .ff .cta {
+            margin-top: auto;
+            font-size: .78rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-top: 10px
+        }
+
+        .fb2 p {
+            font-size: .92rem;
+            line-height: 1.5;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        body.light .fb2 p {
+            color: #0f172a
+        }
+
+        .fb2.best p {
+            color: var(--correct);
+        }
+
+        .fb2.alt p {
+            color: var(--wrong);
+        }
+
+        /* CONTEXT BOX */
+        .ctx {
+            background: var(--surf2);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: var(--radius);
+            padding: 24px 30px;
+            margin-bottom: 24px;
+            max-width: 950px;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        body.light .ctx {
+            background: rgba(0, 65, 112, .03);
+            border-color: rgba(0, 65, 112, .08)
+        }
+
+        .ctx h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .ctx p {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        body.light .ctx p {
+            color: #0f172a
+        }
+
+        .ctx p:last-child {
+            margin-bottom: 0;
+        }
+
+        .qh {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.45
+        }
+
+        .qn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .72rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 3px
+        }
+
+        /* FINAL BOX */
+        .fbox {
+            position: absolute;
+            inset: 0;
+            background: var(--bg);
+            z-index: 20;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            padding: 40px;
+            animation: fadeIn .4s ease;
+            overflow-y: auto
+        }
+
+        body.light .fbox {
+            background: #f0f4fb
+        }
+
+        .fbox.show {
+            display: flex
+        }
+
+        .fbox-inner {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 850px;
+            padding: 20px 0
+        }
+
+        .fbox h3 {
+            color: var(--correct);
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px
+        }
+
+        .fbox p {
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            max-width: 800px;
+            text-align: left;
+        }
+
+        body.light .fbox p {
+            color: #0f172a
+        }
+
+        .fbox ul {
+            list-style: none;
+            margin-top: 0px;
+            margin-bottom: 16px;
+            text-align: left;
+            display: inline-block;
+            max-width: 800px;
+            padding-left: 10px;
+        }
+
+        .fbox li {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--text);
+            line-height: 1.45
+        }
+
+        body.light .fbox li {
+            color: #0f172a
+        }
+
+        /* NAV MENU */
+        .nmo {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(4px);
+            z-index: 1001;
+            display: none;
+            opacity: 0;
+            transition: opacity .3s
+        }
+
+        .nmo.show {
+            display: block;
+            opacity: 1
+        }
+
+        .nmp {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1002;
+            background: #0f1729;
+            width: min(280px, 80vw);
+            height: 100%;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform .25s ease;
+            padding: 16px 12px 20px;
+            box-shadow: -6px 0 24px rgba(0, 0, 0, .4)
+        }
+
+        body.light .nmp {
+            background: #fff;
+            box-shadow: -6px 0 24px rgba(0, 0, 0, .1)
+        }
+
+        .nmp.show {
+            transform: translateX(0)
+        }
+
+        .nmh {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 0 4px
+        }
+
+        .nmh h3 {
+            font-size: .82rem;
+            font-weight: 700
+        }
+
+        .nmc {
+            background: rgba(255, 255, 255, .06);
+            border: none;
+            color: var(--muted);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .75rem;
+            transition: all .2s
+        }
+
+        .nmc:hover {
+            background: rgba(255, 255, 255, .12);
+            color: #fff
+        }
+
+        .nmi {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--muted);
+            font-size: .74rem;
+            transition: all .2s;
+            margin-bottom: 2px;
+            cursor: pointer
+        }
+
+        .nmi:hover {
+            background: rgba(255, 255, 255, .05)
+        }
+
+        .nmi.act {
+            background: rgba(251, 190, 0, .08) !important;
+            color: var(--accent) !important;
+            font-weight: 600
+        }
+
+        .nmico {
+            font-size: .9rem;
+            flex-shrink: 0;
+            width: 22px;
+            text-align: center
+        }
+
+        /* BOTTOM NAV */
+        .bnav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: var(--primary);
+            border-top: 1px solid rgba(255, 255, 255, .1);
+            flex-shrink: 0
+        }
+
+        body.light .bnav {
+            border-top-color: rgba(0, 65, 112, .15)
+        }
+
+        .nb {
+            border: none;
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: .85rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all .2s
+        }
+
+        .nb:hover:not(:disabled) {
+            background: rgba(255, 255, 255, .22);
+            transform: translateY(-1px)
+        }
+
+        .nb:disabled {
+            opacity: .3;
+            cursor: default
+        }
+
+        .nb.next {
+            background: var(--accent);
+            color: #0f172a
+        }
+
+        .nb.next:hover:not(:disabled) {
+            box-shadow: 0 3px 10px rgba(251, 190, 0, .3)
+        }
+
+        .dots {
+            display: flex;
+            align-items: center;
+            gap: 7px
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .2);
+            transition: all .3s;
+            cursor: pointer
+        }
+
+        .dot:hover {
+            background: rgba(255, 255, 255, .4)
+        }
+
+        .dot.act {
+            background: var(--accent);
+            width: 24px;
+            border-radius: 5px
+        }
+
+        /* RESPONSIVE */
+        @media(max-width:820px) {
+            .wrap {
+                width: 100%;
+                min-width: auto;
+                border-radius: 0;
+                border: none;
+                min-height: 100vh;
+                aspect-ratio: auto
+            }
+
+            .frow {
+                grid-template-columns: 1fr
+            }
+
+            .fc {
+                min-height: 160px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="topbar">
+            <span class="course">Fundamentos de Base de Datos | DRBD_2008</span>
+            <span class="title">Tipos de JOIN en consultas SQL</span>
+            <div class="controls">
+                <img src="marca UTPL 2018.png" alt="UTPL">
+                <button class="tbtn thbtn" onclick="toggleTheme()" title="Cambiar modo"><i
+                        class="fas fa-moon"></i></button>
+                <button class="tbtn" onclick="toggleNav()" title="Menú"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+
+        <div class="slides">
+
+            <div class="slide active" id="s0">
+                <div class="hero-slide">
+                    <div class="hero-badge"><i class="fas fa-graduation-cap"></i> Semana 5 · Caso de estudio práctico
+                    </div>
+                    <h1>Tipos de JOIN en consultas SQL</h1>
+                    <p class="sub">Profesor: Juan Carlos Morocho Yunga</p>
+                    <button class="hero-cta" onclick="go(1)">Explorar caso <span class="arrow">→</span></button>
+                    <div class="instruction-bar"><i class="fas fa-hand-pointer"></i> Integre los temas revisados a
+                        través del análisis y resolución del siguiente caso.</div>
+                </div>
+            </div>
+
+            <div class="slide" id="s1">
+                <div class="content-scroll">
+                    <div class="slide-header"><i class="fas fa-book-reader"></i> Contexto del caso</div>
+                    <div class="ctx">
+                        <h3><i class="fas fa-database"></i> Situación</h3>
+                        <p>En un sistema académico, se requiere generar distintos reportes a partir de tablas
+                            relacionadas como Estudiantes, Cursos y Matrículas. El equipo técnico debe decidir qué tipo
+                            de JOIN utilizar según el objetivo del análisis: en algunos casos se necesita visualizar
+                            únicamente registros coincidentes entre tablas, mientras que en otros se requiere incluir
+                            información completa incluso cuando no existen relaciones. Además, se debe considerar la
+                            correcta interpretación de valores NULL cuando no hay correspondencia entre registros. La
+                            elección incorrecta podría generar resultados incompletos o inconsistentes, afectando la
+                            toma de decisiones institucionales. Es momento de analizar cada situación y seleccionar el
+                            tipo de JOIN más adecuado para cada requerimiento. ¡Mucha suerte!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="s2">
+                <div class="content-scroll">
+                    <div class="slide-header"><i class="fas fa-question-circle"></i> Pregunta 1 de 3</div>
+                    <div class="qh"><span class="qn">1</span> ¿Qué tipo de JOIN se debe utilizar si se desea obtener
+                        únicamente los registros que tienen coincidencias en ambas tablas?</div>
+                    <div class="frow">
+                        <div class="fc" onclick="flip(this,1)">
+                            <div class="fi">
+                                <div class="ff">
+                                    <div class="lbl"><i class="fas fa-link"></i> OPCION A</div>
+                                    <p>• OPCION A: Utilizar INNER JOIN para recuperar solo filas con valores
+                                        coincidentes en ambas tablas.</p>
+                                    <div class="cta"><i class="fas fa-sync-alt"></i> Clic para ver retroalimentación
+                                    </div>
+                                </div>
+                                <div class="fb2 best">
+                                    <p>Retroalimentación OPCION A: Es la opción más adecuada, ya que INNER JOIN retorna
+                                        exclusivamente las filas que tienen correspondencia en ambas tablas,
+                                        garantizando consistencia en los datos relacionados.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fc" onclick="flip(this,1)">
+                            <div class="fi">
+                                <div class="ff">
+                                    <div class="lbl"><i class="fas fa-arrow-circle-left"></i> OPCION B</div>
+                                    <p>• OPCION B: Utilizar LEFT JOIN para incluir también registros sin coincidencia en
+                                        la tabla derecha.</p>
+                                    <div class="cta"><i class="fas fa-sync-alt"></i> Clic para ver retroalimentación
+                                    </div>
+                                </div>
+                                <div class="fb2 alt">
+                                    <p>Retroalimentación OPCION B: Es una alternativa válida en ciertos análisis; sin
+                                        embargo, incluye registros sin coincidencia, lo que no cumple el criterio de
+                                        coincidencia estricta requerido.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="s3">
+                <div class="content-scroll">
+                    <div class="slide-header"><i class="fas fa-question-circle"></i> Pregunta 2 de 3</div>
+                    <div class="qh"><span class="qn">2</span> ¿Qué tipo de JOIN permite obtener todos los registros de
+                        una tabla, incluso si no tienen coincidencia en la otra?</div>
+                    <div class="frow">
+                        <div class="fc" onclick="flip(this,2)">
+                            <div class="fi">
+                                <div class="ff">
+                                    <div class="lbl"><i class="fas fa-arrow-circle-left"></i> OPCION A</div>
+                                    <p>• OPCION A: Aplicar LEFT JOIN para incluir todos los registros de la tabla
+                                        izquierda y valores NULL en caso de no coincidencia.</p>
+                                    <div class="cta"><i class="fas fa-sync-alt"></i> Clic para ver retroalimentación
+                                    </div>
+                                </div>
+                                <div class="fb2 best">
+                                    <p>Retroalimentación OPCION A: Es la opción más pertinente, ya que LEFT JOIN incluye
+                                        todos los registros de la tabla principal, mostrando NULL cuando no existen
+                                        coincidencias en la tabla relacionada.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fc" onclick="flip(this,2)">
+                            <div class="fi">
+                                <div class="ff">
+                                    <div class="lbl"><i class="fas fa-link"></i> OPCION B</div>
+                                    <p>• OPCION B: Aplicar INNER JOIN para asegurar que todos los registros tengan
+                                        correspondencia en ambas tablas.</p>
+                                    <div class="cta"><i class="fas fa-sync-alt"></i> Clic para ver retroalimentación
+                                    </div>
+                                </div>
+                                <div class="fb2 alt">
+                                    <p>Retroalimentación OPCION B: Es una opción correcta en escenarios de coincidencia
+                                        estricta; sin embargo, excluye registros sin correspondencia, limitando la
+                                        visión completa de los datos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="s4">
+                <div class="content-scroll">
+                    <div class="slide-header"><i class="fas fa-question-circle"></i> Pregunta 3 de 3</div>
+                    <div class="qh"><span class="qn">3</span> ¿Qué tipo de JOIN se debe utilizar para obtener todas las
+                        combinaciones posibles entre dos tablas?</div>
+                    <div class="frow">
+                        <div class="fc" onclick="flip(this,3)">
+                            <div class="fi">
+                                <div class="ff">
+                                    <div class="lbl"><i class="fas fa-times"></i> OPCION A</div>
+                                    <p>• OPCION A: Utilizar CROSS JOIN para generar el producto cartesiano entre las
+                                        tablas.</p>
+                                    <div class="cta"><i class="fas fa-sync-alt"></i> Clic para ver retroalimentación
+                                    </div>
+                                </div>
+                                <div class="fb2 best">
+                                    <p>Retroalimentación OPCION A: Es la opción más adecuada, ya que CROSS JOIN genera
+                                        todas las combinaciones posibles entre registros de ambas tablas, sin requerir
+                                        condiciones de coincidencia.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fc" onclick="flip(this,3)">
+                            <div class="fi">
+                                <div class="ff">
+                                    <div class="lbl"><i class="fas fa-expand-arrows-alt"></i> OPCION B</div>
+                                    <p>• OPCION B: Utilizar FULL OUTER JOIN para incluir registros coincidentes y no
+                                        coincidentes de ambas tablas.</p>
+                                    <div class="cta"><i class="fas fa-sync-alt"></i> Clic para ver retroalimentación
+                                    </div>
+                                </div>
+                                <div class="fb2 alt">
+                                    <p>Retroalimentación OPCION B: Es una alternativa válida para combinar datos
+                                        completos; sin embargo, no genera todas las combinaciones posibles, sino
+                                        únicamente coincidencias y no coincidencias.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fbox" id="fin">
+                        <div class="fbox-inner">
+                            <h3><i class="fas fa-trophy"></i> ¡Actividad Completada!</h3>
+                            <p>La selección del tipo de JOIN determina la calidad y alcance de los resultados obtenidos.
+                            </p>
+                            <ul>
+                                <li>- INNER JOIN permite recuperar coincidencias estrictas entre tablas.</li>
+                                <li>- LEFT JOIN amplía la consulta incluyendo registros sin correspondencia.</li>
+                                <li>- CROSS JOIN genera combinaciones completas entre conjuntos de datos.</li>
+                            </ul>
+                            <p>El dominio de estos operadores optimiza la integración y análisis de información
+                                relacional.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bnav">
+            <button class="nb" id="bp" onclick="go(cur-1)"><i class="fas fa-arrow-left"></i> Anterior</button>
+            <div class="dots">
+                <div class="dot" onclick="go(0)"></div>
+                <div class="dot" onclick="go(1)"></div>
+                <div class="dot" onclick="go(2)"></div>
+                <div class="dot" onclick="go(3)"></div>
+                <div class="dot" onclick="go(4)"></div>
+            </div>
+            <button class="nb next" id="bn" onclick="go(cur+1)">Siguiente <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div class="nmo" id="nmo" onclick="toggleNav()"></div>
+    <div class="nmp" id="nmp">
+        <div class="nmh">
+            <h3>Semana 5</h3><button class="nmc" onclick="toggleNav()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="nmi" onclick="go(0);toggleNav()"><span class="nmico">🏠</span><span>Inicio</span></div>
+        <div class="nmi" onclick="go(1);toggleNav()"><span class="nmico">📖</span><span>Contexto</span></div>
+        <div class="nmi" onclick="go(2);toggleNav()"><span class="nmico">🧩</span><span>Pregunta 1</span></div>
+        <div class="nmi" onclick="go(3);toggleNav()"><span class="nmico">🧩</span><span>Pregunta 2</span></div>
+        <div class="nmi" onclick="go(4);toggleNav()"><span class="nmico">🧩</span><span>Pregunta 3</span></div>
+
+    </div>
+    <script>
+        let cur = 0; const slides = document.querySelectorAll('.slide'); const dots = document.querySelectorAll('.dot'); const total = slides.length;
+        function go(n) { if (n < 0 || n >= total) return; slides[cur].classList.remove('active'); slides[cur].classList.add('prev'); dots[cur] && dots[cur].classList.remove('act'); cur = n; slides.forEach((s, i) => { if (i !== cur) { s.classList.remove('active'); if (i < cur) s.classList.add('prev'); else s.classList.remove('prev') } }); slides[cur].classList.remove('prev'); slides[cur].classList.add('active'); dots[cur] && dots[cur].classList.add('act'); document.getElementById('bp').disabled = cur === 0; document.getElementById('bn').disabled = cur === total - 1; updateMenu() }
+        function updateMenu() { document.querySelectorAll('.nmi').forEach((m, i) => { m.classList.toggle('act', i === cur) }) }
+        document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === ' ') go(cur + 1); if (e.key === 'ArrowLeft') go(cur - 1) });
+        function applyTheme(t) { document.body.classList.toggle('light', t === 'light'); localStorage.setItem('rTheme', t); const b = document.querySelector('.thbtn'); if (b) b.innerHTML = t === 'light' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>' }
+        function toggleTheme() { applyTheme(localStorage.getItem('rTheme') === 'light' ? 'dark' : 'light') }
+        (function () { applyTheme(localStorage.getItem('rTheme') || 'dark') })();
+        function toggleNav() { const o = document.getElementById('nmo'), p = document.getElementById('nmp'); if (p.classList.contains('show')) { p.classList.remove('show'); setTimeout(() => o.classList.remove('show'), 300) } else { o.classList.add('show'); requestAnimationFrame(() => p.classList.add('show')) } }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { const p = document.getElementById('nmp'); if (p && p.classList.contains('show')) toggleNav() } });
+
+        // Reorganizar opciones de respuesta aleatoriamente al inicio
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.frow').forEach(row => {
+                let cards = Array.from(row.children);
+                if (Math.random() > 0.5) {
+                    row.appendChild(cards[0]); // Invierte el orden A - B
+                }
+            });
+        });
+
+        go(0);
+
+        let done = new Set(); function flip(el, q) { if (el.classList.contains('flipped')) return; el.classList.add('flipped'); el.closest('.frow').querySelectorAll('.fc').forEach(c => { if (c !== el) c.classList.add('flipped') }); done.add(q); if (done.size === 3) setTimeout(() => { document.getElementById('fin').classList.add('show') }, 500) }
+    </script>
+</body>
+
+</html>
