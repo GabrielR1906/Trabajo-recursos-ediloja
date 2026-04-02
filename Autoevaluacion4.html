@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Autoevaluación 4 - Fundamentos de Base de Datos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,*::before,*::after {box-sizing: border-box;margin: 0;padding: 0}html {font-size: 20.5px}:root {--bg: #0a1628;--surface: rgba(255, 255, 255, .06);--surf2: rgba(255, 255, 255, .09);--primary: #004170;--accent: #FBBE00;--correct: #4ade80;--wrong: #ef4444;--text: #e2e8f0;--muted: #cbd5e1;--radius: 16px}body {font-family: 'Inter', sans-serif;background: #060e1a;color: var(--text);min-height: 100vh;display: flex;justify-content: center;align-items: center;padding: 20px;margin: 0;overflow: hidden}body.light {--bg: #f0f4fb;--surface: rgba(0, 65, 112, .04);--surf2: rgba(0, 65, 112, .07);--text: #0f172a;--muted: #475569;background: #e2e8f0;color: #0f172a}.wrap {width: 100%;max-width: 1100px;aspect-ratio: 16/9;border-radius: 18px;overflow: hidden;box-shadow: 0 8px 40px rgba(0, 0, 0, .45);background: var(--bg);display: flex;flex-direction: column;border: 1px solid rgba(255, 255, 255, .08);position: relative}body.light .wrap {box-shadow: 0 8px 40px rgba(0, 0, 0, .12);border-color: rgba(0, 65, 112, .12)}.topbar {display: flex;align-items: center;justify-content: space-between;padding: 10px 20px;background: var(--primary);color: #fff;flex-shrink: 0;position: relative;z-index: 10}.topbar .course {font-size: .8rem;font-weight: 700;letter-spacing: .5px;background: rgba(255, 255, 255, .15);padding: 4px 12px;border-radius: 6px}.topbar .title {font-size: .9rem;font-weight: 600;flex: 1;margin-left: 20px}.controls {display: flex;gap: 10px;align-items: center}.tbtn {background: rgba(255, 255, 255, .1);border: none;color: #fff;width: 36px;height: 36px;border-radius: 8px;cursor: pointer;transition: all .2s ease;display: flex;align-items: center;justify-content: center;font-size: 1rem}.tbtn:hover {background: rgba(255, 255, 255, .2)}.view {display: none}.view.active {display: flex;flex: 1;overflow: hidden}.quiz-header {padding: 20px;border-bottom: 1px solid rgba(255, 255, 255, .08);background: var(--surface);flex-shrink: 0}.quiz-header.light {border-color: rgba(0, 65, 112, .1)}.qh-top {display: flex;justify-content: space-between;align-items: center;margin-bottom: 12px}.q-title {font-size: 1.1rem;font-weight: 700}.btn-back {background: rgba(255, 255, 255, .1);border: 1px solid rgba(255, 255, 255, .15);color: #fff;padding: 8px 12px;border-radius: 8px;cursor: pointer;transition: all .2s ease;font-size: .9rem}.btn-back:hover {background: rgba(255, 255, 255, .2)}.progress-container {width: 100%;height: 4px;background: rgba(255, 255, 255, .08);border-radius: 2px;overflow: hidden}.progress-fill {height: 100%;background: var(--accent);width: 0%;transition: width .3s ease}.quiz-content {flex: 1;overflow-y: auto;padding: 30px;display: flex;flex-direction: column}.q-text-box {margin-bottom: 25px}.q-counter {font-size: .85rem;color: var(--muted);font-weight: 600;margin-bottom: 8px;text-transform: uppercase;letter-spacing: .5px}.q-text {font-size: 1.1rem;font-weight: 600;line-height: 1.6;color: var(--text)}.matching-canvas-container {width: 100%;background: var(--surface);border-radius: 12px;padding: 20px;margin: 20px 0;position: relative;border: 2px solid rgba(255, 255, 255, .06)}.matching-wrapper {display: grid;grid-template-columns: 1fr 1fr;gap: 30px;position: relative}.matching-col {display: flex;flex-direction: column;gap: 12px}.matching-col-label {font-size: .85rem;color: var(--accent);font-weight: 700;text-transform: uppercase;letter-spacing: 1px;margin-bottom: 8px}.match-card {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);border-radius: 10px;padding: 12px 16px;cursor: grab;transition: all .2s ease;user-select: none;display: flex;align-items: center;gap: 12px;min-height: 60px}.match-card.dragging {opacity: 0.7;cursor: grabbing}.match-card.drag-over {border-color: var(--accent);background: rgba(251, 190, 0, .1)}.match-card-circle {width: 32px;height: 32px;border-radius: 50%;background: rgba(255, 255, 255, .1);display: flex;align-items: center;justify-content: center;font-weight: 700;font-size: .85rem;flex-shrink: 0}.match-card span {flex: 1;word-wrap: break-word}.match-card:hover {border-color: var(--primary);background: var(--surf2)}.match-card.connected {border-color: var(--accent);background: rgba(251, 190, 0, .12)}.match-card.correct {border-color: var(--correct);background: rgba(74, 222, 128, .1)}.match-card.wrong {border-color: var(--wrong);background: rgba(239, 68, 68, .08)}.enum-container {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);border-radius: 12px;padding: 20px;margin: 20px 0}.enum-item {display: grid;grid-template-columns: auto 1fr auto;gap: 20px;align-items: center;margin-bottom: 16px}.enum-item:last-child {margin-bottom: 0}.enum-letter {font-weight: 700;min-width: 30px;color: var(--accent)}.enum-text {word-wrap: break-word;line-height: 1.4}.enum-input {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);color: var(--text);padding: 8px 12px;border-radius: 8px;width: 80px;text-align: center;font-size: 1rem;font-weight: 600;transition: all .2s ease}.enum-input:focus {outline: none;border-color: var(--accent);background: var(--surf2)}.enum-input.correct {border-color: var(--correct);background: rgba(74, 222, 128, .1)}.enum-input.wrong {border-color: var(--wrong);background: rgba(239, 68, 68, .08)}.opt-grid {display: grid;grid-template-columns: repeat(2, 1fr);gap: 12px;width: 100%;max-width: 850px;margin: 0 auto}.opt-card {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);border-radius: 12px;padding: 16px;cursor: pointer;transition: all .2s ease;text-align: center;min-height: 60px;display: flex;align-items: center;justify-content: center;font-weight: 500}.opt-card:hover {border-color: var(--primary);background: var(--surf2)}.opt-card.dis {border-color: rgba(255, 255, 255, .06);cursor: not-allowed;opacity: .6}.opt-card.ok {border-color: var(--correct);background: rgba(74, 222, 128, .1);color: var(--correct);font-weight: 700}.opt-card.no {border-color: var(--wrong);background: rgba(239, 68, 68, .1);color: var(--wrong)}.btn-verify {background: var(--accent);color: #000;border: none;padding: 12px 24px;border-radius: 10px;cursor: pointer;font-weight: 700;margin-top: 25px;transition: all .2s ease;font-size: .95rem;width: 100%;max-width: 300px;margin-left: auto;margin-right: auto;display: block}.btn-verify:hover {transform: translateY(-2px);box-shadow: 0 4px 12px rgba(251, 190, 0, .3)}.btn-verify:disabled {opacity: .5;cursor: not-allowed;transform: none}.modal-overlay {display: none;position: fixed;top: 0;left: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .7);justify-content: center;align-items: center;z-index: 999}.modal-overlay.show {display: flex}.modal-card {background: var(--bg);border: 1px solid rgba(255, 255, 255, .12);border-radius: 16px;padding: 30px;max-width: 500px;width: 100%;text-align: center;animation: slideUp .3s ease}.modal-card.correct .md-icon {color: var(--correct)}.modal-card.wrong .md-icon {color: var(--wrong)}.md-icon {font-size: 3rem;margin-bottom: 15px}.md-title {font-size: 1.3rem;font-weight: 700;margin-bottom: 12px}.md-text {font-size: .95rem;line-height: 1.6;color: var(--muted);margin-bottom: 25px}.btn-action {background: var(--accent);color: #000;border: none;padding: 12px 24px;border-radius: 10px;font-weight: 700;cursor: pointer;transition: all .2s ease}.btn-action:hover {transform: translateY(-2px);box-shadow: 0 4px 12px rgba(251, 190, 0, .3)}.res-view {flex-direction: column;justify-content: center;align-items: center;text-align: center;padding: 40px}.res-icon {font-size: 4rem;color: var(--accent);margin-bottom: 20px}.res-title {font-size: 1.8rem;font-weight: 800;margin-bottom: 15px}.res-score {font-size: 2.5rem;font-weight: 800;color: var(--accent);margin-bottom: 10px}.res-msg {font-size: 1rem;color: var(--muted);margin-bottom: 30px}.custom-scrollbar::-webkit-scrollbar {width: 6px}.custom-scrollbar::-webkit-scrollbar-track {background: transparent}.custom-scrollbar::-webkit-scrollbar-thumb {background: rgba(255, 255, 255, .15);border-radius: 3px}.custom-scrollbar::-webkit-scrollbar-thumb:hover {background: rgba(255, 255, 255, .25)}@keyframes slideUp {from {opacity: 0;transform: translateY(20px)}to {opacity: 1;transform: translateY(0)}}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="topbar">
+            <div class="course">FUNDAMENTOS DE BASE DE DATOS</div>
+            <span class="title">Autoevaluación 4 - Organización física y conceptos avanzados</span>
+            <div class="controls">
+                <img src="../marca UTPL 2018.png" alt="UTPL" onerror="this.style.display='none'">
+                <button class="tbtn thbtn" onclick="toggleTheme()" title="Cambiar modo"><i class="fas fa-moon"></i></button>
+            </div>
+        </div>
+
+        <div class="view active" id="v-quiz">
+            <div class="quiz-header">
+                <div class="qh-top">
+                    <span class="q-title" id="quizTitle">Autoevaluación 4</span>
+                    <button class="btn-back" onclick="location.href='#'" title="Volver"><i class="fas fa-times-circle"></i></button>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="quizProgress"></div>
+                </div>
+            </div>
+            <div class="quiz-content custom-scrollbar">
+                <div class="q-text-box">
+                    <div class="q-counter" id="qCounter">Pregunta 1 de 10</div>
+                    <div class="q-text" id="qText"></div>
+                </div>
+                <div id="optionsContainer"></div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="fbModal">
+            <div class="modal-card custom-scrollbar" id="fbCard">
+                <div class="md-icon" id="fbIcon"><i class="fas fa-check-circle"></i></div>
+                <div class="md-title" id="fbTitle">¡Correcto!</div>
+                <div class="md-text" id="fbText"></div>
+                <button class="btn-action" onclick="nextQuestion()">Continuar <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="view res-view" id="v-results">
+            <div class="res-icon"><i class="fas fa-trophy"></i></div>
+            <div class="res-title">¡Evaluación completada!</div>
+            <div class="res-score" id="finalScore">0/10</div>
+            <div class="res-msg" id="finalMsg">Has terminado la autoevaluación.</div>
+            <button class="btn-action" onclick="location.reload()"><i class="fas fa-redo"></i> Reintentar</button>
+        </div>
+    </div>
+
+    <script>
+        function applyTheme(t) {
+            if (t === 'light') {
+                document.body.classList.add('light');
+            } else {
+                document.body.classList.remove('light');
+            }
+            localStorage.setItem('rTheme', t);
+            const b = document.querySelector('.thbtn');
+            if (b) b.innerHTML = t === 'light' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+        
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('rTheme') || 'dark';
+            applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+        }
+
+        const DATA = [{
+            title: "Autoevaluación 4",
+            qs: [
+                {type: "multiple", q: "En la arquitectura ANSI-SPARC, ¿cuál de los siguientes niveles describe cómo se almacenan físicamente los datos en el disco?", o: ["Nivel Externo", "Nivel Conceptual", "Nivel Interno", "Nivel Transaccional"], a: 2, f: "El nivel interno se ocupa de los detalles técnicos del almacenamiento físico y del acceso a los datos en el hardware, nivel en el cual trabaja principalmente el Administrador de Base de Datos (DBA)."},
+                {type: "multiple", q: "Suponga que decide migrar su base de datos de discos HDD a discos SSD para mejorar la velocidad. Gracias a la arquitectura de bases de datos, las consultas SQL de los usuarios no requieren ser modificadas. ¿Qué concepto se aplica aquí?", o: ["Independencia lógica de datos", "Independencia física de datos", "Particionamiento vertical", "Dependencia funcional"], a: 1, f: "La independencia física de datos es la capacidad de modificar el esquema interno, como por ejemplo cambiar el medio de almacenamiento o añadir índices, sin necesidad de alterar el esquema lógico o las aplicaciones."},
+                {type: "multiple", q: "¿Qué tipo de índice es ideal cuando necesitamos realizar búsquedas exactas logrando un tiempo de respuesta constante O(log n), pero que NO es eficiente para búsquedas por rango de fechas?", o: ["Índice B-Tree", "Índice de montículo (Heap)", "Índice Snowflake", "Índice Hash"], a: 3, f: "Los índices Hash transforman la clave en una dirección directa en un solo paso matemático, lo que los hace extremadamente rápidos para búsquedas puntuales, pero poco eficientes para establecer rangos."},
+                {type: "multiple", q: "¿Cuál es el enfoque principal que utiliza un Lago de Datos (Data Lake) para manejar la estructura de la información, a diferencia de un Data Warehouse tradicional?", o: ["Utiliza el enfoque schema-on-read (esquema en la lectura).", "Aplica un esquema en estrella estricto.", "Utiliza el enfoque schema-on-write (esquema en la escritura).", "Se restringe exclusivamente a datos estructurados."], a: 0, f: "Un Data Lake almacena datos crudos sin requerir estructurarlos antes de guardarlos. El esquema o formato se le da únicamente en el momento en que se va a consultar la información (schema-on-read)."},
+                {type: "multiselect", q: "Identifique cuáles de las siguientes características corresponden a un sistema de Procesamiento Analítico en Línea (OLAP). Seleccione todas las que apliquen:", o: ["Consultas complejas de agregación, análisis multidimensional y cálculos estadísticos.", "Tiempo de respuesta exigido en milisegundos para operaciones atómicas.", "Utiliza esquemas dimensionales tipo estrella o copo de nieve con alta redundancia.", "Almacenamiento comúnmente orientado a columnas (column-based)."], a: [0, 2, 3], f: "Los sistemas OLAP (como los Data Warehouses) se centran en el análisis histórico de grandes volúmenes de datos usando cubos multidimensionales. Las respuestas rápidas en milisegundos para inserciones unitarias son características de los sistemas OLTP."},
+                {type: "multiselect", q: "¿Cuáles de las siguientes opciones representan tipos válidos de particionamiento horizontal de datos, útiles para dividir tablas masivas como los registros de llamadas en telecomunicaciones? Seleccione todas las que apliquen:", o: ["Separar registros de tráfico por mes o año.", "Asignar filas según una lista predefinida de regiones.", "Separar columnas poco consultadas en otra tabla.", "Distribuir filas uniformemente usando una función matemática."], a: [0, 1, 3], f: "RANGE, LIST y HASH son estrategias de particionamiento horizontal (dividen las filas). La opción 'c' describe el particionamiento vertical, el cual divide las columnas, no las filas."},
+                {type: "multiselect", q: "¿Cuáles de las siguientes son categorías principales de las bases de datos NoSQL diseñadas para solventar problemas de escalabilidad y flexibilidad? Seleccione todas las que apliquen:", o: ["Bases de datos ANSI-SPARC", "Bases de datos de grafos.", "Bases de datos documentales.", "Bases de datos clave-valor."], a: [1, 2, 3], f: "Las cuatro principales categorías NoSQL son Documentales, Clave-Valor, Columnas Anchas y Grafos. ANSI-SPARC no es una categoría de base de datos, sino un estándar de arquitectura de tres niveles."},
+                {type: "multiple", q: "¿Qué es un esquema en la arquitectura de base de datos?", o: ["Tabla virtual que no almacena datos por sí misma", "Descripción estática de la estructura: define tablas, columnas, tipos de datos y relaciones", "Conjunto de datos dinámicos almacenados en la base de datos", "Vista personalizada del usuario"], a: 1, f: "El esquema es la descripción estática de la estructura de la base de datos, definiendo tablas, columnas, tipos de datos y relaciones."},
+                {type: "multiple", q: "¿Cuál es la principal característica técnica de los archivos con índice?", o: ["Los registros se mantienen ordenados por un campo clave", "Mantiene una estructura de datos auxiliar en forma de árbol que apunta a los registros en disco", "Los registros se insertan velozmente al final del archivo sin orden particular", "Requiere recorrer todos los registros para realizar una búsqueda"], a: 1, f: "Los archivos con índice mantienen una estructura auxiliar (como B-Tree) que mejora drásticamente el rendimiento de búsqueda por rangos."},
+                {type: "multiple", q: "¿Cuál es el caso de uso más adecuado para las bases de datos de grafos como Neo4j?", o: ["Almacenar metadatos de sensores IoT con estructuras dinámicas", "Modelar topologías de red, analizar rutas de comunicación y optimizar conexiones complejas", "Sistemas de analítica, Big Data y almacenamiento masivo de registros de series temporales", "Almacenamiento simple de clave-valor"], a: 1, f: "Las bases de datos de grafos son ideales para modelar relaciones complejas como topologías de red y rutas de comunicación."}
+            ]
+        }];
+
+        let cQ = 0, sc = 0, canClk = true;
+        let connectionStates = {};
+
+        function loadQ() {
+            const q = DATA[0].qs[cQ];
+            const prog = ((cQ) / DATA[0].qs.length) * 100;
+            document.getElementById('quizProgress').style.width = prog + '%';
+            document.getElementById('qCounter').textContent = `Pregunta ${cQ + 1} de ${DATA[0].qs.length}`;
+            document.getElementById('qText').textContent = q.q;
+
+            const oc = document.getElementById('optionsContainer');
+            oc.innerHTML = '';
+            connectionStates[cQ] = {};
+
+            if (q.type === 'multiple') {
+                loadMultiple(q, oc);
+            } else if (q.type === 'multiselect') {
+                loadMultiSelect(q, oc);
+            } else if (q.type === 'matching') {
+                loadMatching(q, oc);
+            }
+        }
+
+        function loadMultiple(q, oc) {
+            const grid = document.createElement('div');
+            grid.className = 'opt-grid';
+            q.o.forEach((opt, i) => {
+                const card = document.createElement('div');
+                card.className = 'opt-card';
+                card.textContent = opt;
+                card.onclick = () => checkAnswer(q, i, card, grid);
+                grid.appendChild(card);
+            });
+            oc.appendChild(grid);
+        }
+
+        function loadMultiSelect(q, oc) {
+            const grid = document.createElement('div');
+            grid.className = 'opt-grid';
+            grid.style.marginBottom = '20px';
+            q.o.forEach((opt, i) => {
+                const card = document.createElement('div');
+                card.className = 'opt-card';
+                card.textContent = opt;
+                card.dataset.index = i;
+                card.onclick = () => toggleMultiSelect(card, q, grid);
+                grid.appendChild(card);
+            });
+
+            const btnVerify = document.createElement('button');
+            btnVerify.className = 'btn-verify';
+            btnVerify.innerHTML = 'Verificar respuestas <i class="fas fa-check"></i>';
+            btnVerify.onclick = () => verifyMultiSelect(q, grid);
+            oc.appendChild(grid);
+            oc.appendChild(btnVerify);
+        }
+
+        function toggleMultiSelect(card, q, grid) {
+            if (card.classList.contains('dis')) return;
+            card.classList.toggle('selected');
+            if (card.classList.contains('selected')) {
+                card.style.borderColor = 'var(--accent)';
+                card.style.background = 'rgba(251, 190, 0, .12)';
+            } else {
+                card.style.borderColor = 'rgba(255, 255, 255, .06)';
+                card.style.background = 'var(--surface)';
+            }
+        }
+
+        function verifyMultiSelect(q, grid) {
+            const selected = Array.from(grid.querySelectorAll('.opt-card.selected')).map(c => parseInt(c.dataset.index));
+            const correct = q.a;
+            const isOk = JSON.stringify(selected.sort()) === JSON.stringify(correct.sort());
+            
+            grid.querySelectorAll('.opt-card').forEach((card, i) => {
+                card.classList.add('dis');
+                if (correct.includes(i)) {
+                    card.classList.add('ok');
+                    card.style.borderColor = 'var(--correct)';
+                    card.style.background = 'rgba(74, 222, 128, .1)';
+                } else if (selected.includes(i)) {
+                    card.classList.add('no');
+                    card.style.borderColor = 'var(--wrong)';
+                    card.style.background = 'rgba(239, 68, 68, .08)';
+                }
+            });
+
+            if (isOk) sc++;
+            showFeedback(isOk, q.f);
+        }
+
+        function loadMatching(q, oc) {
+            const container = document.createElement('div');
+            container.className = 'matching-canvas-container';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'matching-wrapper';
+
+            const leftCol = document.createElement('div');
+            leftCol.className = 'matching-col';
+            const leftLabel = document.createElement('div');
+            leftLabel.className = 'matching-col-label';
+            leftLabel.textContent = 'CONCEPTOS';
+            leftCol.appendChild(leftLabel);
+
+            q.items.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.id = `left-${cQ}-${idx}`;
+                card.innerHTML = `<div class="match-card-circle">${item.letter}</div><span>${item.text}</span>`;
+                card.draggable = true;
+                card.dataset.type = 'left';
+                card.dataset.index = idx;
+                card.dataset.letter = item.letter;
+                card.ondragstart = (e) => {
+                    e.dataTransfer.effectAllowed = 'copy';
+                    e.dataTransfer.setData('letter', item.letter);
+                    e.dataTransfer.setData('index', idx);
+                    card.classList.add('dragging');
+                };
+                card.ondragend = () => card.classList.remove('dragging');
+                leftCol.appendChild(card);
+            });
+
+            const rightCol = document.createElement('div');
+            rightCol.className = 'matching-col';
+            const rightLabel = document.createElement('div');
+            rightLabel.className = 'matching-col-label';
+            rightLabel.textContent = 'DEFINICIONES';
+            rightCol.appendChild(rightLabel);
+
+            q.options.forEach((opt) => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.id = `right-${cQ}-${opt.number}`;
+                card.innerHTML = `<div class="match-card-circle">${opt.number}</div><span>${opt.text}</span>`;
+                card.dataset.type = 'right';
+                card.dataset.number = opt.number;
+                card.ondragover = (e) => {
+                    e.preventDefault();
+                    card.classList.add('drag-over');
+                };
+                card.ondragleave = () => card.classList.remove('drag-over');
+                card.ondrop = (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    const letter = e.dataTransfer.getData('letter');
+                    const index = parseInt(e.dataTransfer.getData('index'));
+                    
+                    connectionStates[cQ][letter] = opt.number;
+                    
+                    const leftCard = document.getElementById(`left-${cQ}-${index}`);
+                    leftCard.classList.add('connected');
+                    leftCard.style.borderColor = 'var(--accent)';
+                    leftCard.style.background = 'rgba(251, 190, 0, .12)';
+                };
+                rightCol.appendChild(card);
+            });
+
+            wrapper.appendChild(leftCol);
+            wrapper.appendChild(rightCol);
+            container.appendChild(wrapper);
+
+            const btnVerify = document.createElement('button');
+            btnVerify.className = 'btn-verify';
+            btnVerify.innerHTML = 'Verificar relaciones <i class="fas fa-check"></i>';
+            btnVerify.onclick = () => verifyMatching(q, leftCol, rightCol);
+            container.appendChild(btnVerify);
+
+            oc.appendChild(container);
+        }
+
+        function verifyMatching(q, leftCol, rightCol) {
+            let isCorrect = true;
+            q.items.forEach((item, idx) => {
+                const userAnswer = connectionStates[cQ][item.letter];
+                const correctAnswer = q.answers[item.letter];
+                const leftEl = document.getElementById(`left-${cQ}-${idx}`);
+                const rightEl = document.getElementById(`right-${cQ}-${userAnswer}`);
+                const correctEl = document.getElementById(`right-${cQ}-${correctAnswer}`);
+
+                if (userAnswer === correctAnswer) {
+                    leftEl.classList.add('correct');
+                    leftEl.style.borderColor = 'var(--correct)';
+                    leftEl.style.background = 'rgba(74, 222, 128, .1)';
+                    if (correctEl) {
+                        correctEl.classList.add('correct');
+                        correctEl.style.borderColor = 'var(--correct)';
+                        correctEl.style.background = 'rgba(74, 222, 128, .1)';
+                    }
+                } else {
+                    leftEl.classList.add('wrong');
+                    leftEl.style.borderColor = 'var(--wrong)';
+                    leftEl.style.background = 'rgba(239, 68, 68, .08)';
+                    if (rightEl) {
+                        rightEl.classList.add('wrong');
+                        rightEl.style.borderColor = 'var(--wrong)';
+                        rightEl.style.background = 'rgba(239, 68, 68, .08)';
+                    }
+                    if (correctEl) {
+                        correctEl.classList.add('correct');
+                        correctEl.style.borderColor = 'var(--correct)';
+                        correctEl.style.background = 'rgba(74, 222, 128, .1)';
+                    }
+                    isCorrect = false;
+                }
+            });
+
+            if (isCorrect) sc++;
+            showFeedback(isCorrect, q.f);
+        }
+
+        function checkAnswer(q, i, el, grid) {
+            if (!canClk) return;
+            canClk = false;
+            const isOk = (i === q.a);
+            const opts = grid.querySelectorAll('.opt-card');
+            opts.forEach(o => o.classList.add('dis'));
+            opts[q.a].classList.add('ok');
+            if (!isOk) el.classList.add('no');
+            else sc++;
+            showFeedback(isOk, q.f);
+        }
+
+        function showFeedback(isOk, feedback) {
+            const fbM = document.getElementById('fbModal');
+            const fbC = document.getElementById('fbCard');
+            fbC.className = 'modal-card custom-scrollbar ' + (isOk ? 'correct' : 'wrong');
+            document.getElementById('fbIcon').innerHTML = isOk ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+            document.getElementById('fbTitle').textContent = isOk ? '¡Correcto!' : 'Incorrecto';
+            document.getElementById('fbText').textContent = feedback;
+            fbM.classList.add('show');
+            canClk = true;
+        }
+
+        function nextQuestion() {
+            document.getElementById('fbModal').classList.remove('show');
+            cQ++;
+            if (cQ < DATA[0].qs.length) {
+                loadQ();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('v-quiz').classList.remove('active');
+            document.getElementById('v-results').classList.add('active');
+            document.getElementById('finalScore').textContent = sc + '/' + DATA[0].qs.length;
+            const percentage = (sc / DATA[0].qs.length) * 100;
+            let msg = '';
+            if (percentage === 100) msg = '¡Excelente trabajo!';
+            else if (percentage >= 80) msg = 'Muy bien, sigue estudiando.';
+            else if (percentage >= 60) msg = 'Buen intento. Revisa los temas.';
+            else msg = 'Necesitas estudiar más este tema.';
+            document.getElementById('finalMsg').textContent = msg;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('rTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQ();
+        });
+    </script>
+</body>
+</html>

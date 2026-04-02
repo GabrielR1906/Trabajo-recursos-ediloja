@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Autoevaluación 2 - Fundamentos de Base de Datos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,*::before,*::after {box-sizing: border-box;margin: 0;padding: 0}html {font-size: 20.5px}:root {--bg: #0a1628;--surface: rgba(255, 255, 255, .06);--surf2: rgba(255, 255, 255, .09);--primary: #004170;--accent: #FBBE00;--correct: #4ade80;--wrong: #ef4444;--text: #e2e8f0;--muted: #cbd5e1;--radius: 16px}body {font-family: 'Inter', sans-serif;background: #060e1a;color: var(--text);min-height: 100vh;display: flex;justify-content: center;align-items: center;padding: 20px;margin: 0;overflow: hidden}body.light {--bg: #f0f4fb;--surface: rgba(0, 65, 112, .04);--surf2: rgba(0, 65, 112, .07);--text: #0f172a;--muted: #475569;background: #e2e8f0;color: #0f172a}.wrap {width: 100%;max-width: 1100px;aspect-ratio: 16/9;border-radius: 18px;overflow: hidden;box-shadow: 0 8px 40px rgba(0, 0, 0, .45);background: var(--bg);display: flex;flex-direction: column;border: 1px solid rgba(255, 255, 255, .08);position: relative}body.light .wrap {box-shadow: 0 8px 40px rgba(0, 0, 0, .12);border-color: rgba(0, 65, 112, .12)}.topbar {display: flex;align-items: center;justify-content: space-between;padding: 10px 20px;background: var(--primary);color: #fff;flex-shrink: 0;position: relative;z-index: 10}.topbar .course {font-size: .8rem;font-weight: 700;letter-spacing: .5px;background: rgba(255, 255, 255, .15);padding: 4px 12px;border-radius: 6px}.topbar .title {font-size: .9rem;font-weight: 600;flex: 1;margin-left: 20px}.controls {display: flex;gap: 10px;align-items: center}.tbtn {background: rgba(255, 255, 255, .1);border: none;color: #fff;width: 36px;height: 36px;border-radius: 8px;cursor: pointer;transition: all .2s ease;display: flex;align-items: center;justify-content: center;font-size: 1rem}.tbtn:hover {background: rgba(255, 255, 255, .2)}.view {display: none}.view.active {display: flex;flex: 1;overflow: hidden}.quiz-header {padding: 20px;border-bottom: 1px solid rgba(255, 255, 255, .08);background: var(--surface);flex-shrink: 0}.quiz-header.light {border-color: rgba(0, 65, 112, .1)}.qh-top {display: flex;justify-content: space-between;align-items: center;margin-bottom: 12px}.q-title {font-size: 1.1rem;font-weight: 700}.btn-back {background: rgba(255, 255, 255, .1);border: 1px solid rgba(255, 255, 255, .15);color: #fff;padding: 8px 12px;border-radius: 8px;cursor: pointer;transition: all .2s ease;font-size: .9rem}.btn-back:hover {background: rgba(255, 255, 255, .2)}.progress-container {width: 100%;height: 4px;background: rgba(255, 255, 255, .08);border-radius: 2px;overflow: hidden}.progress-fill {height: 100%;background: var(--accent);width: 0%;transition: width .3s ease}.quiz-content {flex: 1;overflow-y: auto;padding: 30px;display: flex;flex-direction: column}.q-text-box {margin-bottom: 25px}.q-counter {font-size: .85rem;color: var(--muted);font-weight: 600;margin-bottom: 8px;text-transform: uppercase;letter-spacing: .5px}.q-text {font-size: 1.1rem;font-weight: 600;line-height: 1.6;color: var(--text)}.matching-canvas-container {width: 100%;background: var(--surface);border-radius: 12px;padding: 20px;margin: 20px 0;position: relative;border: 2px solid rgba(255, 255, 255, .06)}.matching-wrapper {display: grid;grid-template-columns: 1fr 1fr;gap: 30px;position: relative}.matching-col {display: flex;flex-direction: column;gap: 12px}.matching-col-label {font-size: .85rem;color: var(--accent);font-weight: 700;text-transform: uppercase;letter-spacing: 1px;margin-bottom: 8px}.match-card {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);border-radius: 10px;padding: 12px 16px;cursor: grab;transition: all .2s ease;user-select: none;display: flex;align-items: center;gap: 12px;min-height: 60px}.match-card.dragging {opacity: 0.7;cursor: grabbing}.match-card.drag-over {border-color: var(--accent);background: rgba(251, 190, 0, .1)}.match-card-circle {width: 32px;height: 32px;border-radius: 50%;background: rgba(255, 255, 255, .1);display: flex;align-items: center;justify-content: center;font-weight: 700;font-size: .85rem;flex-shrink: 0}.match-card span {flex: 1;word-wrap: break-word}.match-card:hover {border-color: var(--primary);background: var(--surf2)}.match-card.connected {border-color: var(--accent);background: rgba(251, 190, 0, .12)}.match-card.correct {border-color: var(--correct);background: rgba(34, 197, 94, .1)}.match-card.wrong {border-color: var(--wrong);background: rgba(239, 68, 68, .08)}.enum-container {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);border-radius: 12px;padding: 20px;margin: 20px 0}.enum-item {display: grid;grid-template-columns: auto 1fr auto;gap: 20px;align-items: center;margin-bottom: 16px}.enum-item:last-child {margin-bottom: 0}.enum-letter {font-weight: 700;min-width: 30px;color: var(--accent)}.enum-text {word-wrap: break-word;line-height: 1.4}.enum-input {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);color: var(--text);padding: 8px 12px;border-radius: 8px;width: 80px;text-align: center;font-size: 1rem;font-weight: 600;transition: all .2s ease}.enum-input:focus {outline: none;border-color: var(--accent);background: var(--surf2)}.enum-input.correct {border-color: var(--correct);background: rgba(34, 197, 94, .1)}.enum-input.wrong {border-color: var(--wrong);background: rgba(239, 68, 68, .08)}.opt-grid {display: grid;grid-template-columns: repeat(2, 1fr);gap: 12px;width: 100%;max-width: 850px;margin: 0 auto}.opt-card {background: var(--surface);border: 2px solid rgba(255, 255, 255, .06);border-radius: 12px;padding: 16px;cursor: pointer;transition: all .2s ease;text-align: center;min-height: 60px;display: flex;align-items: center;justify-content: center;font-weight: 500}.opt-card:hover {border-color: var(--primary);background: var(--surf2)}.opt-card.dis {border-color: rgba(255, 255, 255, .06);cursor: not-allowed;opacity: .6}.opt-card.ok {border-color: var(--correct);background: rgba(34, 197, 94, .12);color: var(--correct);font-weight: 700}.opt-card.no {border-color: var(--wrong);background: rgba(239, 68, 68, .1);color: var(--wrong)}.btn-verify {background: var(--accent);color: #000;border: none;padding: 12px 24px;border-radius: 10px;cursor: pointer;font-weight: 700;margin-top: 25px;transition: all .2s ease;font-size: .95rem;width: 100%;max-width: 300px;margin-left: auto;margin-right: auto;display: block}.btn-verify:hover {transform: translateY(-2px);box-shadow: 0 4px 12px rgba(251, 190, 0, .3)}.btn-verify:disabled {opacity: .5;cursor: not-allowed;transform: none}.modal-overlay {display: none;position: fixed;top: 0;left: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .7);justify-content: center;align-items: center;z-index: 999}.modal-overlay.show {display: flex}.modal-card {background: var(--bg);border: 1px solid rgba(255, 255, 255, .12);border-radius: 16px;padding: 30px;max-width: 500px;width: 100%;text-align: center;animation: slideUp .3s ease}.modal-card.correct .md-icon {color: var(--correct)}.modal-card.wrong .md-icon {color: var(--wrong)}.md-icon {font-size: 3rem;margin-bottom: 15px}.md-title {font-size: 1.3rem;font-weight: 700;margin-bottom: 12px}.md-text {font-size: .95rem;line-height: 1.6;color: var(--muted);margin-bottom: 25px}.btn-action {background: var(--accent);color: #000;border: none;padding: 12px 24px;border-radius: 10px;font-weight: 700;cursor: pointer;transition: all .2s ease}.btn-action:hover {transform: translateY(-2px);box-shadow: 0 4px 12px rgba(251, 190, 0, .3)}.res-view {flex-direction: column;justify-content: center;align-items: center;text-align: center;padding: 40px}.res-icon {font-size: 4rem;color: var(--accent);margin-bottom: 20px}.res-title {font-size: 1.8rem;font-weight: 800;margin-bottom: 15px}.res-score {font-size: 2.5rem;font-weight: 800;color: var(--accent);margin-bottom: 10px}.res-msg {font-size: 1rem;color: var(--muted);margin-bottom: 30px}.custom-scrollbar::-webkit-scrollbar {width: 6px}.custom-scrollbar::-webkit-scrollbar-track {background: transparent}.custom-scrollbar::-webkit-scrollbar-thumb {background: rgba(255, 255, 255, .15);border-radius: 3px}.custom-scrollbar::-webkit-scrollbar-thumb:hover {background: rgba(255, 255, 255, .25)}@keyframes slideUp {from {opacity: 0;transform: translateY(20px)}to {opacity: 1;transform: translateY(0)}}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="topbar">
+            <div class="course">FUNDAMENTOS DE BASE DE DATOS</div>
+            <span class="title">Autoevaluación 2 - Modelo Entidad-Relación y Normalización</span>
+            <div class="controls">
+                <img src="../marca UTPL 2018.png" alt="UTPL" onerror="this.style.display='none'">
+                <button class="tbtn thbtn" onclick="toggleTheme()" title="Cambiar modo"><i class="fas fa-moon"></i></button>
+            </div>
+        </div>
+
+        <div class="view active" id="v-quiz">
+            <div class="quiz-header">
+                <div class="qh-top">
+                    <span class="q-title" id="quizTitle">Autoevaluación 2</span>
+                    <button class="btn-back" onclick="location.href='#'" title="Volver"><i class="fas fa-times-circle"></i></button>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="quizProgress"></div>
+                </div>
+            </div>
+            <div class="quiz-content custom-scrollbar">
+                <div class="q-text-box">
+                    <div class="q-counter" id="qCounter">Pregunta 1 de 10</div>
+                    <div class="q-text" id="qText"></div>
+                </div>
+                <div id="optionsContainer"></div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="fbModal">
+            <div class="modal-card custom-scrollbar" id="fbCard">
+                <div class="md-icon" id="fbIcon"><i class="fas fa-check-circle"></i></div>
+                <div class="md-title" id="fbTitle">¡Correcto!</div>
+                <div class="md-text" id="fbText"></div>
+                <button class="btn-action" onclick="nextQuestion()">Continuar <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="view res-view" id="v-results">
+            <div class="res-icon"><i class="fas fa-trophy"></i></div>
+            <div class="res-title">¡Evaluación completada!</div>
+            <div class="res-score" id="finalScore">0/10</div>
+            <div class="res-msg" id="finalMsg">Has terminado la autoevaluación.</div>
+            <button class="btn-action" onclick="location.reload()"><i class="fas fa-redo"></i> Reintentar</button>
+        </div>
+    </div>
+
+    <script>
+        function applyTheme(t) {
+            if (t === 'light') {
+                document.body.classList.add('light');
+            } else {
+                document.body.classList.remove('light');
+            }
+            localStorage.setItem('rTheme', t);
+            const b = document.querySelector('.thbtn');
+            if (b) b.innerHTML = t === 'light' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+        
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('rTheme') || 'dark';
+            applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+        }
+
+        const DATA = [{
+            title: "Autoevaluación 2",
+            qs: [
+                {type: "multiple", q: "¿Cuál es el propósito principal del Modelo Entidad-Relación (ER)?", o: ["Representar datos de manera gráfica", "Describir la estructura lógica de una base de datos", "Optimizar las consultas SQL", "Controlar el acceso a los datos"], a: 1, f: "El Modelo ER describe la estructura lógica de una base de datos mediante entidades, atributos y relaciones."},
+                {type: "multiple", q: "En el modelo ER, ¿qué representa una entidad?", o: ["Un atributo único", "Un objeto o concepto del mundo real", "Una relación entre tablas", "Un tipo de dato específico"], a: 1, f: "Una entidad representa un objeto o concepto del mundo real que se desea modelar, como Estudiante, Profesor, o Curso."},
+                {type: "multiple", q: "¿Cuál de las siguientes es una característica de la Primera Forma Normal (1FN)?", o: ["Todos los atributos deben ser atómicos", "Eliminar dependencias transitivas", "Todos los atributos dependen de la clave primaria", "Aplicar restricciones de dominio"], a: 0, f: "La 1FN requiere que todos los atributos sean atómicos (indivisibles)."},
+                {type: "multiple", q: "¿Qué garantiza la Segunda Forma Normal (2FN)?", o: ["Elimina dependencias parciales", "Todos los atributos son atómicos", "Previene redundancia de datos", "Define la clave primaria correctamente"], a: 0, f: "La 2FN elimina las dependencias parciales donde un atributo depende solo de parte de la clave primaria."},
+                {type: "multiple", q: "¿Cuál es el objetivo de la Tercera Forma Normal (3FN)?", o: ["Indizar la base de datos", "Eliminar dependencias transitivas", "Crear vistas personalizadas", "Establecer integridad referencial"], a: 1, f: "La 3FN elimina las dependencias transitivas donde un atributo depende de otro que no es la clave primaria."},
+                {type: "multiple", q: "En SQL, ¿cuál es la función de la cláusula WHERE?", o: ["Definir tablas", "Filtrar filas según criterios", "Ordenar resultados", "Agrupar datos"], a: 1, f: "WHERE se usa para filtrar filas que cumplen con ciertas condiciones."},
+                {type: "multiple", q: "¿Cuál es la diferencia entre INNER JOIN y LEFT JOIN?", o: ["INNER JOIN retorna todas las filas, LEFT JOIN solo coincidencias", "INNER JOIN retorna solo coincidencias, LEFT JOIN retorna todas las filas de la izquierda", "No hay diferencia", "INNER JOIN es más rápido"], a: 1, f: "INNER JOIN retorna solo filas que tienen coincidencia en ambas tablas, mientras que LEFT JOIN retorna todas las filas de la tabla izquierda más las coincidencias."},
+                {type: "multiple", q: "¿Cuál es la operación CRUD que se utiliza para insertar nuevos registros en la base de datos?", o: ["Create", "Read", "Update", "Delete"], a: 0, f: "Create (INSERT) se utiliza para insertar nuevos registros en la base de datos."},
+                {type: "multiple", q: "¿Cuál es el orden correcto de las cláusulas en una consulta SQL estándar?", o: ["SELECT, FROM, WHERE, GROUP BY", "FROM, WHERE, SELECT, GROUP BY", "FROM, SELECT, WHERE, GROUP BY", "WHERE, FROM, SELECT, GROUP BY"], a: 1, f: "El orden correcto es: FROM, WHERE, SELECT, GROUP BY. Se especifica la tabla, se filtra, se selecciona y se agrupa."},
+                {type: "multiple", q: "¿Cuál es la función de COUNT() en SQL?", o: ["Calcula la suma de valores numéricos", "Cuenta el número de filas", "Calcula el promedio de valores numéricos", "Ordena los resultados"], a: 1, f: "COUNT() cuenta el número de filas que cumplen con los criterios especificados."}
+            ]
+        }];
+
+        let cQ = 0, sc = 0, canClk = true;
+        let connectionStates = {};
+        let orderingStates = {};
+
+        function loadQ() {
+            const q = DATA[0].qs[cQ];
+            const prog = ((cQ) / DATA[0].qs.length) * 100;
+            document.getElementById('quizProgress').style.width = prog + '%';
+            document.getElementById('qCounter').textContent = `Pregunta ${cQ + 1} de ${DATA[0].qs.length}`;
+            document.getElementById('qText').textContent = q.q;
+
+            const oc = document.getElementById('optionsContainer');
+            oc.innerHTML = '';
+            connectionStates[cQ] = {};
+            orderingStates[cQ] = {};
+
+            if (q.type === 'multiple') {
+                loadMultiple(q, oc);
+            } else if (q.type === 'matching') {
+                loadMatching(q, oc);
+            } else if (q.type === 'ordering') {
+                loadOrdering(q, oc);
+            }
+        }
+
+        function loadMultiple(q, oc) {
+            const grid = document.createElement('div');
+            grid.className = 'opt-grid';
+            q.o.forEach((opt, i) => {
+                const card = document.createElement('div');
+                card.className = 'opt-card';
+                card.textContent = opt;
+                card.onclick = () => checkAnswer(q, i, card, grid);
+                grid.appendChild(card);
+            });
+            oc.appendChild(grid);
+        }
+
+        function loadMatching(q, oc) {
+            const container = document.createElement('div');
+            container.className = 'matching-canvas-container';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'matching-wrapper';
+
+            const leftCol = document.createElement('div');
+            leftCol.className = 'matching-col';
+            const leftLabel = document.createElement('div');
+            leftLabel.className = 'matching-col-label';
+            leftLabel.textContent = 'CONCEPTOS';
+            leftCol.appendChild(leftLabel);
+
+            q.items.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.id = `left-${cQ}-${idx}`;
+                card.innerHTML = `<div class="match-card-circle">${item.letter}</div><span>${item.text}</span>`;
+                card.draggable = true;
+                card.dataset.type = 'left';
+                card.dataset.index = idx;
+                card.dataset.letter = item.letter;
+                card.ondragstart = (e) => {
+                    e.dataTransfer.effectAllowed = 'copy';
+                    e.dataTransfer.setData('letter', item.letter);
+                    e.dataTransfer.setData('index', idx);
+                    card.classList.add('dragging');
+                };
+                card.ondragend = () => card.classList.remove('dragging');
+                leftCol.appendChild(card);
+            });
+
+            const rightCol = document.createElement('div');
+            rightCol.className = 'matching-col';
+            const rightLabel = document.createElement('div');
+            rightLabel.className = 'matching-col-label';
+            rightLabel.textContent = 'DEFINICIONES';
+            rightCol.appendChild(rightLabel);
+
+            q.options.forEach((opt) => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.id = `right-${cQ}-${opt.number}`;
+                card.innerHTML = `<div class="match-card-circle">${opt.number}</div><span>${opt.text}</span>`;
+                card.dataset.type = 'right';
+                card.dataset.number = opt.number;
+                card.ondragover = (e) => {
+                    e.preventDefault();
+                    card.classList.add('drag-over');
+                };
+                card.ondragleave = () => card.classList.remove('drag-over');
+                card.ondrop = (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    const letter = e.dataTransfer.getData('letter');
+                    const index = parseInt(e.dataTransfer.getData('index'));
+                    
+                    connectionStates[cQ][letter] = opt.number;
+                    
+                    const leftCard = document.getElementById(`left-${cQ}-${index}`);
+                    leftCard.classList.add('connected');
+                    leftCard.style.borderColor = 'var(--accent)';
+                    leftCard.style.background = 'rgba(251, 190, 0, .12)';
+                };
+                rightCol.appendChild(card);
+            });
+
+            wrapper.appendChild(leftCol);
+            wrapper.appendChild(rightCol);
+            container.appendChild(wrapper);
+
+            const btnVerify = document.createElement('button');
+            btnVerify.className = 'btn-verify';
+            btnVerify.innerHTML = 'Verificar relaciones <i class="fas fa-check"></i>';
+            btnVerify.onclick = () => verifyMatching(q, leftCol, rightCol);
+            container.appendChild(btnVerify);
+
+            oc.appendChild(container);
+        }
+
+        function loadOrdering(q, oc) {
+            const container = document.createElement('div');
+            container.className = 'enum-container';
+
+            q.items.forEach((item) => {
+                const row = document.createElement('div');
+                row.className = 'enum-item';
+                
+                const label = document.createElement('div');
+                label.className = 'enum-letter';
+                label.textContent = item.letter;
+                
+                const text = document.createElement('div');
+                text.className = 'enum-text';
+                text.textContent = item.text;
+                
+                const input = document.createElement('input');
+                input.className = 'enum-input';
+                input.type = 'number';
+                input.min = '1';
+                input.max = q.items.length;
+                input.placeholder = 'Orden';
+                input.dataset.letter = item.letter;
+                input.onchange = () => {
+                    orderingStates[cQ][item.letter] = input.value;
+                };
+                
+                row.appendChild(label);
+                row.appendChild(text);
+                row.appendChild(input);
+                container.appendChild(row);
+            });
+
+            const btnVerify = document.createElement('button');
+            btnVerify.className = 'btn-verify';
+            btnVerify.innerHTML = 'Verificar orden <i class="fas fa-check"></i>';
+            btnVerify.onclick = () => verifyOrdering(q, container);
+            container.appendChild(btnVerify);
+
+            oc.appendChild(container);
+        }
+
+
+
+        function verifyMatching(q, leftCol, rightCol) {
+            let isCorrect = true;
+            q.items.forEach((item, idx) => {
+                const userAnswer = connectionStates[cQ][item.letter];
+                const correctAnswer = q.answers[item.letter];
+                const leftEl = document.getElementById(`left-${cQ}-${idx}`);
+                const rightEl = document.getElementById(`right-${cQ}-${userAnswer}`);
+                const correctEl = document.getElementById(`right-${cQ}-${correctAnswer}`);
+
+                if (userAnswer === correctAnswer) {
+                    leftEl.classList.add('correct');
+                    leftEl.style.borderColor = 'var(--correct)';
+                    leftEl.style.background = 'rgba(74, 222, 128, .1)';
+                    if (correctEl) {
+                        correctEl.classList.add('correct');
+                        correctEl.style.borderColor = 'var(--correct)';
+                        correctEl.style.background = 'rgba(74, 222, 128, .1)';
+                    }
+                } else {
+                    leftEl.classList.add('wrong');
+                    leftEl.style.borderColor = 'var(--wrong)';
+                    leftEl.style.background = 'rgba(239, 68, 68, .08)';
+                    if (rightEl) {
+                        rightEl.classList.add('wrong');
+                        rightEl.style.borderColor = 'var(--wrong)';
+                        rightEl.style.background = 'rgba(239, 68, 68, .08)';
+                    }
+                    if (correctEl) {
+                        correctEl.classList.add('correct');
+                        correctEl.style.borderColor = 'var(--correct)';
+                        correctEl.style.background = 'rgba(74, 222, 128, .1)';
+                    }
+                    isCorrect = false;
+                }
+            });
+
+            if (isCorrect) sc++;
+            showFeedback(isCorrect, q.f);
+        }
+                    if (rightEl) {
+                        rightEl.classList.add('correct');
+                        rightEl.style.borderColor = 'var(--correct)';
+                        rightEl.style.background = 'rgba(34, 197, 94, .1)';
+                    }
+                } else {
+                    leftEl.classList.add('wrong');
+                    leftEl.style.borderColor = 'var(--wrong)';
+                    leftEl.style.background = 'rgba(239, 68, 68, .08)';
+                    if (rightEl) {
+                        rightEl.classList.add('wrong');
+                        rightEl.style.borderColor = 'var(--wrong)';
+                        rightEl.style.background = 'rgba(239, 68, 68, .08)';
+                    }
+                    isCorrect = false;
+                }
+            });
+
+            if (isCorrect) sc++;
+            showFeedback(isCorrect, q.f);
+        }
+
+        function verifyOrdering(q, container) {
+            let isCorrect = true;
+            const inputs = container.querySelectorAll('.enum-input');
+            
+            inputs.forEach((input) => {
+                const letter = input.dataset.letter;
+                const userOrder = input.value;
+                const correctOrder = q.correct_order.indexOf(letter) + 1;
+
+                if (userOrder == correctOrder) {
+                    input.classList.add('correct');
+                    input.style.borderColor = 'var(--correct)';
+                    input.style.background = 'rgba(34, 197, 94, .1)';
+                } else {
+                    input.classList.add('wrong');
+                    input.style.borderColor = 'var(--wrong)';
+                    input.style.background = 'rgba(239, 68, 68, .08)';
+                    isCorrect = false;
+                }
+                input.disabled = true;
+            });
+
+            if (isCorrect) sc++;
+            showFeedback(isCorrect, q.f);
+        }
+
+        function checkAnswer(q, i, el, grid) {
+            if (!canClk) return;
+            canClk = false;
+            const isOk = (i === q.a);
+            const opts = grid.querySelectorAll('.opt-card');
+            opts.forEach(o => o.classList.add('dis'));
+            opts[q.a].classList.add('ok');
+            if (!isOk) el.classList.add('no');
+            else sc++;
+            showFeedback(isOk, q.f);
+        }
+
+        function showFeedback(isOk, feedback) {
+            const fbM = document.getElementById('fbModal');
+            const fbC = document.getElementById('fbCard');
+            fbC.className = 'modal-card custom-scrollbar ' + (isOk ? 'correct' : 'wrong');
+            document.getElementById('fbIcon').innerHTML = isOk ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+            document.getElementById('fbTitle').textContent = isOk ? '¡Correcto!' : 'Incorrecto';
+            document.getElementById('fbText').textContent = feedback;
+            fbM.classList.add('show');
+            canClk = true;
+        }
+
+        function nextQuestion() {
+            document.getElementById('fbModal').classList.remove('show');
+            cQ++;
+            if (cQ < DATA[0].qs.length) {
+                loadQ();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('v-quiz').classList.remove('active');
+            document.getElementById('v-results').classList.add('active');
+            document.getElementById('finalScore').textContent = sc + '/' + DATA[0].qs.length;
+            const percentage = (sc / DATA[0].qs.length) * 100;
+            let msg = '';
+            if (percentage === 100) msg = '¡Excelente trabajo!';
+            else if (percentage >= 80) msg = 'Muy bien, sigue estudiando.';
+            else if (percentage >= 60) msg = 'Buen intento. Revisa los temas.';
+            else msg = 'Necesitas estudiar más este tema.';
+            document.getElementById('finalMsg').textContent = msg;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('rTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQ();
+        });
+    </script>
+</body>
+</html>

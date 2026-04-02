@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Autoevaluación 1 - Conceptos básicos y SQL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            font-size: 20.5px
+        }
+
+        :root {
+            --bg: #0a1628;
+            --surface: rgba(255, 255, 255, .06);
+            --surf2: rgba(255, 255, 255, .09);
+            --primary: #004170;
+            --accent: #FBBE00;
+            --correct: #4ade80;
+            --wrong: #ef4444;
+            --text: #e2e8f0;
+            --muted: #cbd5e1;
+            --radius: 16px
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #060e1a;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden
+        }
+
+        body.light {
+            --bg: #f0f4fb;
+            --surface: rgba(0, 65, 112, .04);
+            --surf2: rgba(0, 65, 112, .07);
+            --text: #0f172a;
+            --muted: #475569;
+            background: #e2e8f0;
+            color: #0f172a
+        }
+
+        .wrap {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16/9;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .45);
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, .08);
+            position: relative
+        }
+
+        body.light .wrap {
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .12);
+            border-color: rgba(0, 65, 112, .12)
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: #fff;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10
+        }
+
+        .topbar .course {
+            font-size: .8rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+            background: rgba(255, 255, 255, .15);
+            padding: 4px 12px;
+            border-radius: 6px
+        }
+
+        .topbar .title {
+            font-size: .9rem;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+            padding: 0 10px
+        }
+
+        .topbar .controls {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .topbar img {
+            height: 28px;
+            object-fit: contain;
+            filter: brightness(0) invert(1)
+        }
+
+        body.light .topbar img {
+            filter: brightness(0) invert(1)
+        }
+
+        .tbtn {
+            border: none;
+            background: rgba(255, 255, 255, .15);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .85rem;
+            transition: all .2s
+        }
+
+        .tbtn:hover {
+            background: rgba(255, 255, 255, .3)
+        }
+
+        /* VISTAS */
+        .view {
+            position: absolute;
+            inset: 0;
+            top: 48px;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.98);
+            transition: all .4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: var(--bg);
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .view.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+            z-index: 5;
+        }
+
+        /* HOME (MENÚ) */
+        .home-view {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            background: radial-gradient(circle at top, var(--surface) 0%, transparent 70%);
+        }
+
+        .home-view h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .home-view p {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-bottom: 35px;
+            max-width: 600px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .menu-btn {
+            background: var(--surface);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            padding: 25px 20px;
+            cursor: pointer;
+            transition: all .3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        body.light .menu-btn {
+            background: #fff;
+            border-color: rgba(0, 65, 112, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .menu-btn i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            transition: transform .3s;
+        }
+
+        .menu-btn span {
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .menu-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            background: rgba(251, 190, 0, 0.05);
+            box-shadow: 0 10px 25px rgba(251, 190, 0, 0.15);
+        }
+
+        .menu-btn:hover i {
+            transform: scale(1.15);
+        }
+
+        /* QUIZ UI ESTILO GENIALLY */
+        .quiz-header {
+            display: flex;
+            flex-direction: column;
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--surf2);
+            flex-shrink: 0;
+        }
+
+        body.light .quiz-header {
+            border-bottom-color: rgba(0, 65, 112, 0.08);
+            background: rgba(0, 65, 112, 0.02);
+        }
+
+        .qh-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .q-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color .2s;
+        }
+
+        .btn-back:hover {
+            color: var(--wrong);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body.light .progress-container {
+            background: rgba(0, 65, 112, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width .4s ease;
+            border-radius: 4px;
+        }
+
+        .quiz-content {
+            flex: 1;
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            align-items: center;
+        }
+
+        .q-text-box {
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 25px 30px;
+            border-radius: var(--radius);
+            border-left: 6px solid var(--accent);
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .q-text-box {
+            background: #fff;
+            box-shadow: 0 8px 25px rgba(0, 65, 112, 0.06);
+        }
+
+        .q-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .q-counter {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .opts-grid {
+            width: 100%;
+            max-width: 850px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .opt-card {
+            background: var(--surface);
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all .2s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.light .opt-card {
+            background: #fff;
+            border-color: rgba(0, 65, 112, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .opt-card:hover:not(.dis) {
+            border-color: var(--primary);
+            transform: translateX(5px);
+            background: var(--surf2);
+        }
+
+        body.light .opt-card:hover:not(.dis) {
+            background: rgba(0, 65, 112, 0.03);
+        }
+
+        .opt-card.dis {
+            cursor: default;
+            opacity: 0.6;
+        }
+
+        .opt-let {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            transition: all .3s;
+        }
+
+        body.light .opt-let {
+            background: rgba(0, 65, 112, 0.08);
+            color: var(--primary);
+        }
+
+        .opt-txt {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        body.light .opt-txt {
+            color: #0f172a;
+        }
+
+        .opt-card.ok {
+            border-color: var(--correct) !important;
+            background: rgba(34, 197, 94, .1) !important;
+            opacity: 1;
+        }
+
+        .opt-card.no {
+            border-color: var(--wrong) !important;
+            background: rgba(239, 68, 68, .08) !important;
+            opacity: 1;
+        }
+
+        .opt-card.ok .opt-let {
+            background: var(--correct);
+            color: #fff;
+        }
+
+        .opt-card.no .opt-let {
+            background: var(--wrong);
+            color: #fff;
+        }
+
+        /* MODAL POPUP GENIALLY STYLE */
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--bg);
+            width: 100%;
+            max-width: 550px;
+            border-radius: 24px;
+            padding: 35px 40px;
+            text-align: center;
+            transform: translateY(30px) scale(0.9);
+            transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body.light .modal-card {
+            background: #fff;
+            border-color: rgba(0, 65, 112, 0.1);
+            box-shadow: 0 15px 50px rgba(0, 65, 112, 0.15);
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .md-icon {
+            font-size: 4.5rem;
+            margin-bottom: 15px;
+        }
+
+        .md-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .md-text {
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        body.light .md-text {
+            color: #334155;
+        }
+
+        .modal-card.correct .md-icon,
+        .modal-card.correct .md-title {
+            color: var(--correct);
+        }
+
+        .modal-card.wrong .md-icon,
+        .modal-card.wrong .md-title {
+            color: var(--wrong);
+        }
+
+        .btn-action {
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all .2s;
+            box-shadow: 0 4px 15px rgba(251, 190, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 190, 0, 0.35);
+        }
+
+        /* RESULTS */
+        .res-view {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            background: radial-gradient(circle, rgba(0, 65, 112, 0.2) 0%, transparent 70%);
+        }
+
+        .res-icon {
+            font-size: 5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .res-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .res-score {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: var(--correct);
+            line-height: 1;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+        }
+
+        .res-msg {
+            font-size: 1.15rem;
+            color: var(--muted);
+            margin-bottom: 35px;
+            max-width: 550px;
+            line-height: 1.4;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-15px)
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        body.light ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        @media(max-width:820px) {
+            .wrap {
+                border-radius: 0;
+                border: none;
+                min-height: 100vh;
+                aspect-ratio: auto
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-content {
+                padding: 20px;
+            }
+
+            .q-text-box {
+                padding: 20px;
+            }
+
+            .q-text {
+                font-size: 1rem;
+            }
+
+            .modal-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrap">
+        <div class="topbar">
+            <span class="course">DI-DRBD_2008</span>
+            <span class="title">Autoevaluación 1 - Conceptos básicos y SQL</span>
+            <div class="controls">
+                <img src="../marca UTPL 2018.png" alt="UTPL" onerror="this.style.display='none'">
+                <button class="tbtn thbtn" onclick="toggleTheme()" title="Cambiar modo"><i
+                        class="fas fa-moon"></i></button>
+            </div>
+        </div>
+
+        <div class="view active" id="v-quiz">
+            <div class="quiz-header">
+                <div class="qh-top">
+                    <span class="q-title" id="quizTitle">Autoevaluación 1</span>
+                    <button class="btn-back" onclick="location.href='#'" title="Volver"><i
+                            class="fas fa-times-circle"></i></button>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="quizProgress"></div>
+                </div>
+            </div>
+            <div class="quiz-content custom-scrollbar">
+                <div class="q-text-box">
+                    <div class="q-counter" id="qCounter">Pregunta 1 de 10</div>
+                    <div class="q-text" id="qText"></div>
+                </div>
+                <div class="opts-grid" id="optionsGrid">
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="fbModal">
+            <div class="modal-card custom-scrollbar" id="fbCard">
+                <div class="md-icon" id="fbIcon"><i class="fas fa-check-circle"></i></div>
+                <div class="md-title" id="fbTitle">¡Correcto!</div>
+                <div class="md-text" id="fbText"></div>
+                <button class="btn-action" onclick="nextQuestion()">Continuar <i
+                        class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="view res-view" id="v-results">
+            <div class="res-icon"><i class="fas fa-trophy"></i></div>
+            <div class="res-title">¡Evaluación completada!</div>
+            <div class="res-score" id="finalScore">0/10</div>
+            <div class="res-msg" id="finalMsg">Has terminado la autoevaluación.</div>
+            <button class="btn-action" onclick="location.reload()"><i class="fas fa-redo"></i> Reintentar</button>
+        </div>
+
+    </div>
+
+    <script>
+        // THEME TOGGLE
+        function applyTheme(t) {
+            if (t === 'light') {
+                document.body.classList.add('light');
+            } else {
+                document.body.classList.remove('light');
+            }
+            localStorage.setItem('rTheme', t);
+            const b = document.querySelector('.thbtn');
+            if (b) b.innerHTML = t === 'light' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('rTheme') || 'dark';
+            applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+        }
+
+        // DATA - CONCEPTOS BÁSICOS Y SQL
+        const DATA = [
+            {
+                title: "Autoevaluación FB-1",
+                qs: [
+                    {
+                        q: "De acuerdo a lo estudiado, ¿Cuál es la definición más precisa de una base de datos?",
+                        o: ["A) Un programa diseñado para escribir código en lenguajes de alto nivel.", "B) Una interfaz gráfica amigable que evita la complejidad técnica.", "C) Una colección organizada lógicamente de datos relacionados que pretende representar una situación del mundo real.", "D) Un sistema de procesamiento de archivos tradicionales."],
+                        a: 2, f: "Una base de datos intenta representar lo más cercano al mundo real a través de un diseño de tablas relacionadas entre sí."
+                    },
+                    {
+                        q: "¿Cuál es la principal característica de los Usuarios Finales o Normales?",
+                        o: ["A) Desarrollan programas de aplicación utilizando Java o Python.", "B) Acceden a los datos a través de aplicaciones con interfaces gráficas, realizando operaciones predefinidas.", "C) Escriben código para generar llamadas a la base de datos.", "D) Son profesionales técnicos encargados de la independencia de los niveles de abstracción."],
+                        a: 1, f: "Los usuarios finales no necesitan conocer de sentencias SQL ni lenguajes de programación ya que interactúan con interfaces diseñadas para ocultar la complejidad técnica."
+                    },
+                    {
+                        q: "¿Cuál de los siguientes es un ejemplo de interacción con una base de datos?",
+                        o: ["A) Consultar las notas en el sistema académico.", "B) Reparar el hardware de un servidor de datos.", "C) Diseñar un nuevo lenguaje de programación para poder ingresar a la base de datos.", "D) Instalar un sistema operativo desde cero para luego instalar un software de base de datos."],
+                        a: 2, f: "Interacción con base de datos quiere decir que se puede aplicar alguna manera para gestionar datos."
+                    },
+                    {
+                        q: "¿Por qué es importante comprender los diferentes tipos de usuarios de bases de datos?",
+                        o: ["A) Para eliminar la necesidad de usar sistemas de gestión (SGBD).", "B) Para reducir el tamaño físico de los datos almacenados en disco.", "C) Para diseñar interfaces apropiadas y otorgar los permisos de acceso adecuados.", "D) Para convertir la información en datos primarios sin procesar."],
+                        a: 2, f: "Para poder otorgar privilegios de acceso necesarios y también para cubrir los requerimientos de datos de los usuarios."
+                    },
+                    {
+                        q: "¿Qué actividades realizan los Programadores de Aplicaciones?",
+                        o: ["A) Desarrollan programas de aplicación utilizando bases de datos.", "B) Escriben código en lenguajes de alto nivel como C#, Java o Python.", "C) Evitan el uso de código para no conocer la estructura de los datos.", "D) Generan llamadas a la base de datos a través del código que escriben."],
+                        a: 0, f: "Desarrollan programas en lenguajes de programación para interactuar con la base de datos."
+                    },
+                    {
+                        q: "¿En qué situaciones cotidianas las personas interactúan con sistemas de bases de datos?",
+                        o: ["A) Al realizar búsquedas en el catálogo virtual de una biblioteca.", "B) Al utilizar una tarjeta de crédito para realizar compras.", "C) Al registrar transacciones en un supermercado mediante facturación electrónica.", "D) Al utilizar la calculadora para realizar cálculos matemáticas."],
+                        a: 0, f: "La opción de la calculadora no aplica debido a que este dispositivo solamente ejecuta operaciones al momento sin almacenar ni recuperar datos de una base de datos."
+                    },
+                    {
+                        q: "¿Cuáles son los objetivos principales de revisar los niveles de abstracción de una base de datos?",
+                        o: ["A) Evidenciar su independencia.", "B) Comprender su relación entre niveles.", "C) Eliminar por completo el uso de aplicaciones con interfaz gráfica.", "D) Reducir el número de usuarios finales en una organización."],
+                        a: 0, f: "La comprensión de los niveles de abstracción de una base de datos permite conocer que si ejecuto cambios a nivel físico no deben afectar a nivel lógico y los cambios a nivel lógico no deben afectar a nivel externo, así todos los niveles trabajan de forma integrada."
+                    },
+                    {
+                        q: "Relacione correctamente los términos de la columna Concepto con la columna Descripción. a. SGBD\t\t1. Hechos sobre algún dominio organizados en estructuras. b. Datos\t\t2. Ventaja motivada frente al procesamiento de archivos tradicionales. c. Independencia\t\t3. Software que hace de intermediario entre la base de datos y los usuarios.",
+                        o: ["A) SGBD - 3, Datos - 1, Independencia - 2", "B) SGBD - 1, Datos - 3, Independencia - 2", "C) SGBD - 2, Datos - 1, Independencia - 3", "D) SGBD - 3, Datos - 2, Independencia - 1"],
+                        a: 0, f: "El SGBD actúa como intermediario entre usuarios y datos; los datos constituyen hechos organizados; la independencia surge como ventaja frente a limitaciones del modelo tradicional."
+                    },
+                    {
+                        q: "Relacione correctamente los términos de la columna Herramienta/Concepto con la columna Descripción Técnica. a. Lenguajes de alto nivel\t\t1. Evita la complejidad técnica para el usuario común. b. Interfaz gráfica amigable\t\t2. Medio usado por técnicos para generar llamadas a la DB. c. Archivos tradicionales\t\t3. Lo que motiva el surgimiento de los SGBD modernos.",
+                        o: ["A) Lenguajes de alto nivel - 2, Interfaz gráfica amigable - 1, Archivos tradicionales - 3", "B) Lenguajes de alto nivel - 1, Interfaz gráfica amigable - 2, Archivos tradicionales - 3", "C) Lenguajes de alto nivel - 3, Interfaz gráfica amigable - 1, Archivos tradicionales - 2", "D) Lenguajes de alto nivel - 2, Interfaz gráfica amigable - 3, Archivos tradicionales - 1"],
+                        a: 0, f: "Los lenguajes de alto nivel permiten interacción técnica con la base de datos; la interfaz gráfica facilita el uso; los archivos tradicionales evidencian limitaciones que impulsaron nuevos sistemas."
+                    },
+                    {
+                        q: "Relacione correctamente los términos de la columna Actividad con la columna Usuario responsable. a. Generar reportes o actualizar información específica.\t\t1. Programadores de Aplicaciones. b. Escribir código en Java, Python o C#.\t\t2. Usuarios Finales o Normales. c. Utilizar R o Python conectados directamente a la base de datos.\t\t3. Usuarios sofisticados.",
+                        o: ["A) Generar reportes o actualizar información específica - 2, Escribir código en Java, Python o C# - 1, Utilizar R o Python conectados directamente a la base de datos - 3", "B) Generar reportes o actualizar información específica - 1, Escribir código en Java, Python o C# - 2, Utilizar R o Python conectados directamente a la base de datos - 3", "C) Generar reportes o actualizar información específica - 3, Escribir código en Java, Python o C# - 1, Utilizar R o Python conectados directamente a la base de datos - 2", "D) Generar reportes o actualizar información específica - 2, Escribir código en Java, Python o C# - 3, Utilizar R o Python conectados directamente a la base de datos - 1"],
+                        a: 0, f: "Los usuarios finales ejecutan tareas operativas; los programadores desarrollan código; los usuarios sofisticados emplean herramientas analíticas conectadas directamente a la base de datos."
+                    }
+                ]
+            }
+        ];
+
+        let cQz = 0, cQ = 0, sc = 0, canClk = true;
+
+        function view(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('v-' + id).classList.add('active');
+        }
+
+        function loadQ() {
+            canClk = true;
+            const qd = DATA[cQz].qs[cQ];
+            let pct = ((cQ + 1) / 10) * 100;
+            document.getElementById('quizProgress').style.width = pct + '%';
+            document.getElementById('qCounter').innerText = `Pregunta ${cQ + 1} de 10`;
+            document.getElementById('qText').innerText = qd.q;
+
+            const grid = document.getElementById('optionsGrid');
+            grid.innerHTML = '';
+
+            let letters = ['A', 'B', 'C', 'D'];
+            qd.o.forEach((txt, i) => {
+                let cleanTxt = txt.substring(3);
+                let div = document.createElement('div');
+                div.className = 'opt-card';
+                div.innerHTML = `<div class="opt-let">${letters[i]}</div><div class="opt-txt">${cleanTxt}</div>`;
+                div.onclick = () => chk(i, div);
+                grid.appendChild(div);
+            });
+        }
+
+        function chk(i, el) {
+            if (!canClk) return;
+            canClk = false;
+            const qd = DATA[cQz].qs[cQ];
+            const isOk = (i === qd.a);
+            const opts = document.querySelectorAll('.opt-card');
+
+            opts.forEach(o => o.classList.add('dis'));
+            opts[qd.a].classList.add('ok');
+            if (!isOk) el.classList.add('no'); else sc++;
+
+            const fbM = document.getElementById('fbModal');
+            const fbC = document.getElementById('fbCard');
+
+            fbC.className = 'modal-card custom-scrollbar ' + (isOk ? 'correct' : 'wrong');
+            document.getElementById('fbIcon').innerHTML = isOk ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+            document.getElementById('fbTitle').innerText = isOk ? '¡Correcto!' : 'Incorrecto';
+            document.getElementById('fbText').innerText = qd.f;
+
+            setTimeout(() => { fbM.classList.add('show'); }, 600);
+        }
+
+        function nextQuestion() {
+            document.getElementById('fbModal').classList.remove('show');
+            setTimeout(() => {
+                cQ++;
+                if (cQ < 10) loadQ();
+                else {
+                    document.getElementById('quizProgress').style.width = '100%';
+                    setTimeout(showRes, 400);
+                }
+            }, 300);
+        }
+
+        function showRes() {
+            document.getElementById('finalScore').innerText = `${sc}/10`;
+            let m = "";
+            if (sc === 10) m = "¡Excelente! Dominio absoluto de los conceptos básicos y SQL.";
+            else if (sc >= 7) m = "¡Muy buen trabajo! Has comprendido los conceptos principales.";
+            else if (sc >= 5) m = "Buen esfuerzo, pero es recomendable repasar la unidad.";
+            else m = "Es importante que vuelvas a revisar el material de lectura. ¡Tú puedes!";
+            document.getElementById('finalMsg').innerText = m;
+            view('results');
+        }
+
+        // Inicializar cuando carga el documento
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('rTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQ();
+        });
+    </script>
+</body>
+
+</html>
